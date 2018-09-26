@@ -39,18 +39,17 @@ public class MyBenchmark {
     @Benchmark
     public void primes(){
 
-        var threads = new ArrayList<Thread>();
-        var primes = new ArrayList<Long>();
+        var thrds = new ArrayList<Thread>();
+        var p = new ArrayList<Long>();
         long lastValue = 2;
-        while (primes.size() < 10000)
-        {
-            var value = lastValue;
-            var t = new Thread(()->{if (isPrime(value)) { primes.add(value);}});
+        while (p.size() < 10000) {
+            var v = lastValue;
+            var t = new Thread(()->{if (isPrime(v)) { p.add(v);}});
             t.start();
-            threads.add(t);
+            thrds.add(t);
             lastValue++;
         }
-        threads.forEach((t)->{try{t.join();}catch(InterruptedException ex){}});
+        thrds.forEach((t)->{try{t.join();}catch(InterruptedException ex){}});
     }
 
     public boolean isPrime(long potentialPrimes) {
