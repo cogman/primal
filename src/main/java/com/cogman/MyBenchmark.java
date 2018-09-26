@@ -42,7 +42,7 @@ public class MyBenchmark {
     public void primes(){
         var primes = Collections.synchronizedList(new ArrayList<Long>());
         long lastValue = 2;
-        while (primes.size() < 10000)
+        while (primes.size() < 10000 && lastValue < 2_000_000)
         {
             var value = lastValue;
             ForkJoinPool.commonPool().execute(()->{if (isPrime(value)) { primes.add(value);}});
