@@ -35,23 +35,19 @@ import org.openjdk.jmh.annotations.Benchmark;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.ForkJoinPool;
 
 public class MyBenchmark {
     @Benchmark
     public void primes(){
-
-        var threads = new ArrayList<Thread>();
         var primes = Collections.synchronizedList(new ArrayList<Long>());
         long lastValue = 2;
         while (primes.size() < 10000)
         {
             var value = lastValue;
-            var t = new Thread(()->{if (isPrime(value)) { primes.add(value);}});
-            t.start();
-            threads.add(t);
+            ForkJoinPool.commonPool().execute(()->{if (isPrime(value)) { primes.add(value);}});
             lastValue++;
         }
-        threads.forEach((t)->{try{t.join();}catch(InterruptedException ex){}});
     }
 
     public boolean isPrime(long potentialPrimes) {
