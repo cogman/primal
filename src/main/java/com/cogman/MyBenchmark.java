@@ -34,19 +34,29 @@ package com.cogman;
 import org.openjdk.jmh.annotations.Benchmark;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.ForkJoinPool;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class MyBenchmark {
     @Benchmark
     public void primes(){
-        var primes = Collections.synchronizedList(new ArrayList<Long>());
-        long lastValue = 2;
+        long lastCheck = 2;
+        List<Long> primes = new ArrayList<>();
+        List<CompletableFuture<PrimeResult>> futures = new ArrayList<>(100);
         while (primes.size() < 10000)
         {
-            var value = lastValue;
-            ForkJoinPool.commonPool().execute(()->{if (isPrime(value)) { primes.add(value);}});
-            lastValue++;
+            for (long i = lastCheck; i < lastCheck + 1000; ++i)
+            {
+                long j = i;
+                futures.add(CompletableFuture.supplyAsync(()->new PrimeResult(j, isPrime(j))));
+            }
+            lastCheck += 1000;
+            futures.stream()
+                    .map(CompletableFuture::join)
+                    .filter((r)->r.isPrime)
+                    .map((r)->r.primeValue)
+                    .forEach(primes::add);
+            futures.clear();
         }
     }
 
@@ -62,5 +72,16 @@ public class MyBenchmark {
                 return false;
         }
         return true;
+    }
+
+    private static class PrimeResult
+    {
+        private final long primeValue;
+        private final boolean isPrime;
+
+        public PrimeResult(long primeValue, boolean isPrime) {
+            this.primeValue = primeValue;
+            this.isPrime = isPrime;
+        }
     }
 }
