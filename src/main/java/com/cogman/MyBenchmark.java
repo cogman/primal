@@ -33,12 +33,11 @@ package com.cogman;
 
 import org.openjdk.jmh.annotations.Benchmark;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MyBenchmark {
-    private static final BigInteger THREE = BigInteger.valueOf(3);
+
     @Benchmark
     public void primes() {
 
