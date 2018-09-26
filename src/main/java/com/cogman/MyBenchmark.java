@@ -34,13 +34,14 @@ package com.cogman;
 import org.openjdk.jmh.annotations.Benchmark;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MyBenchmark {
     @Benchmark
     public void primes(){
 
         var threads = new ArrayList<Thread>();
-        var primes = new ArrayList<Long>();
+        var primes = Collections.synchronizedList(new ArrayList<Long>());
         long lastValue = 2;
         while (primes.size() < 10000)
         {
