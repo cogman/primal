@@ -33,23 +33,24 @@ package com.cogman;
 
 import org.openjdk.jmh.annotations.Benchmark;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MyBenchmark {
-    private static final BigInteger THREE = BigInteger.valueOf(3);
     @Benchmark
-    public void primes() {
+    public void primes(){
 
-        List<Long> primes = new ArrayList<>();
+        var threads = new ArrayList<Thread>();
+        var primes = new ArrayList<Long>();
         long lastValue = 2;
         while (primes.size() < 10000)
         {
-            if (isPrime(lastValue))
-                primes.add(lastValue);
+            var value = lastValue;
+            var t = new Thread(()->{if (isPrime(value)) { primes.add(value);}});
+            t.start();
+            threads.add(t);
             lastValue++;
         }
+        threads.forEach((t)->{try{t.join();}catch(InterruptedException ex){}});
     }
 
     public boolean isPrime(long potentialPrimes) {
