@@ -58,7 +58,7 @@ public class MyBenchmark {
         if (potentialPrimes % 2 == 0)
             return false;
         for (var i = 3; i <= Math.sqrt(potentialPrimes); i += 2) {
-            if (potentialPrimes % 2 == 0)
+            if (potentialPrimes % i == 0)
                 return false;
         }
         return true;
